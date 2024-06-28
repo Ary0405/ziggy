@@ -43,3 +43,11 @@ export async function fetchRestaurant(id) {
         }
     })
 }
+
+export async function fetchAllItems() {
+    return (db).menuItem.findMany()
+}
+
+export async function fetchAllCategories() {
+    return (db).menuCategory.findMany()
+}

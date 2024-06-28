@@ -41,16 +41,16 @@ export async function fetchCartTotal(id) {
         where: {
             userId: id,
         },
-        sum: {
+        _sum: {
             price: true,
         },
     });
 }
 
-export async function updateCartItem(id,data) {
+export async function updateCartItem(data) {
     return db.cart.update({
         where: {
-            id,
+            id : data.id,
         },
         data,
     });

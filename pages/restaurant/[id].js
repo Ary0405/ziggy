@@ -13,7 +13,8 @@ import {
     Input,
 } from '@chakra-ui/react'
 import { addToCartItem } from '@/operations/user.fetch';
-import Image from 'next/image';
+import { useRouter } from 'next/router';
+
 export async function getServerSideProps(context) {
     const user = context.req.session.user;
     const restaurantId = context.params.id;
@@ -48,6 +49,7 @@ function RestaurantBrowse({ user, items, restaurant }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState({});
     const [quantity, setQuantity] = useState(0);
+    const router = useRouter();
 
     const handleAddToCart = async () => {
         if (quantity === 0) {
@@ -97,7 +99,7 @@ function RestaurantBrowse({ user, items, restaurant }) {
                 <div>
                     <div style={{ "paddingTop": "1rem", "display": "flex", "justifyContent": "space-between", "paddingBottom": "0rem", "paddingLeft": "2rem", "paddingRight": "2rem" }} className="flex flex-col items-center justify-center">
                         <Text fontWeight={"500"} fontSize='4xl'>Welcome to {restaurant.username}</Text>
-                        <Button>View Cart</Button>
+                        <Button onClick={() => router.push(`/cart/${user.id}`)}>View Cart</Button>
                     </div>
                 </div>
                 <div style={{ "margin": "1rem 2rem 0 2rem" }}>

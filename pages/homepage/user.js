@@ -49,7 +49,7 @@ function user({ user, restaurants }) {
                 <div style={{ "paddingTop": "1rem", "display": "flex", "justifyContent": "space-between", "paddingBottom": "0rem", "paddingLeft": "2rem", "paddingRight": "2rem" }} className="flex flex-col items-center justify-center">
                     <Text fontWeight={"500"} fontSize='4xl'>Welcome {user.username}</Text>
                     <Button onClick={() => handleLogOut()} marginTop={"10px"} colorScheme='red'>Logout</Button>
-                    <Button>View Cart</Button>
+                    <Button onClick={() => router.push(`/cart/${user.id}`)}>View Cart</Button>
                 </div>
                 <Text fontSize={'2xl'} paddingLeft={"2rem"}>User Homepage</Text>
             </div>
