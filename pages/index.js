@@ -1,9 +1,9 @@
-import Test from "@/components/Test/Test";
+import HeroComponent from "@/components/HeroComponent/HeroComponent";
 
 export default function Home() {
   return (
     <>
-      <Test />
+      <HeroComponent />
     </>
   )
 }
