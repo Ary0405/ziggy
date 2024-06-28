@@ -1,0 +1,25 @@
+.Signup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    padding: 0 30vw 0 30vw;
+
+    &__title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    &__check {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    &__form {
+        margin-bottom: 1rem;
+    }
+}
