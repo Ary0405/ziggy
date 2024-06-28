@@ -13,3 +13,17 @@ export async function insertCategories(data) {
         data
     });
 }
+
+export async function fetchItems(id) {
+    return (db).menuItem.findMany({
+        where: {
+            restaurantId: id
+        }
+    });
+}
+
+export async function insertItems(data) {
+    return db.menuItem.create({
+        data
+    });
+}

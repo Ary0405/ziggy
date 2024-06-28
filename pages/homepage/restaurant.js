@@ -11,7 +11,8 @@ import {
     Box,
 } from '@chakra-ui/react'
 import Categories from '@/components/Restaurant/Categories/Categories';
-import { fetchCategories } from '@/services/resturant.service';
+import { fetchCategories, fetchItems } from '@/services/resturant.service';
+import Items from '@/components/Restaurant/Items/Items';
 
 export async function getServerSideProps(context) {
     if (context.req.session.user === undefined) {
@@ -36,12 +37,19 @@ export async function getServerSideProps(context) {
 
     const categories = await fetchCategories(user.id);
 
+    const items = await fetchItems(user.id);
+
+    items.forEach((item) => {
+        const category = categories.find((category) => category.id === item.categoryId);
+        item.category_name = category.name;
+    });
+
     return {
-        props: { user: user, categories: categories },
+        props: { user: user, categories: categories, items: items },
     };
 }
 
-function restaurant({ user, categories }) {
+function restaurant({ user, categories, items }) {
     return (
         <div>
             <div>
@@ -62,7 +70,7 @@ function restaurant({ user, categories }) {
                         <Categories categories={categories} user={user} />
                     </TabPanel>
                     <TabPanel>
-                        <p>Items</p>
+                        <Items categories={categories} user={user} items={items} />
                     </TabPanel>
                     <TabPanel>
                         <p>Orders</p>
