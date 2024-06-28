@@ -9,16 +9,18 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  username     String         @unique
-  password     String
-  email        String         @unique
-  role         Role
-  createdAt    DateTime       @default(now())
-  orders       Order[]
-  MenuCategory MenuCategory[]
-  MenuItem     MenuItem[]
-  Cart         Cart[]
+  id               Int            @id @default(autoincrement())
+  username         String         @unique
+  password         String
+  email            String         @unique
+  role             Role
+  createdAt        DateTime       @default(now())
+  userOrders       Order[]        @relation(name: "UserOrder")
+  restaurantOrders Order[]        @relation(name: "RestaurantOrder")
+  MenuCategory     MenuCategory[]
+  MenuItem         MenuItem[]
+  UserCart         Cart[]         @relation(name: "UserCart")
+  RestaurantCart   Cart[]         @relation(name: "RestaurantCart")
 }
 
 model MenuCategory {
@@ -45,14 +47,16 @@ model MenuItem {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int
-  user        User        @relation(fields: [userId], references: [id])
-  tableNumber Int
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
-  completedAt DateTime?
-  orderItems  OrderItem[]
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  user         User        @relation(name: "UserOrder", fields: [userId], references: [id])
+  tableNumber  Int
+  restaurantId Int
+  restaurant   User        @relation(name: "RestaurantOrder", fields: [restaurantId], references: [id])
+  status       OrderStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+  completedAt  DateTime?
+  orderItems   OrderItem[]
 }
 
 model OrderItem {
@@ -66,12 +70,15 @@ model OrderItem {
 }
 
 model Cart {
-  id       Int      @id @default(autoincrement())
-  userId   Int
-  user     User     @relation(fields: [userId], references: [id])
-  itemId   Int
-  item     MenuItem @relation(fields: [itemId], references: [id])
-  quantity Int
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  restaurantId Int
+  restaurant   User     @relation(name: "RestaurantCart", fields: [restaurantId], references: [id])
+  user         User     @relation(name: "UserCart", fields: [userId], references: [id])
+  itemId       Int
+  item         MenuItem @relation(fields: [itemId], references: [id])
+  quantity     Int
+  price        Float
 }
 
 enum Role {
