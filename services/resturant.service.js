@@ -51,3 +51,11 @@ export async function fetchAllItems() {
 export async function fetchAllCategories() {
     return (db).menuCategory.findMany()
 }
+
+export async function fetchRestaurantId(id) {
+    return (db).user.findUnique({
+        where: {
+            id
+        }
+    });
+}

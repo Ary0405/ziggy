@@ -6,9 +6,6 @@ import {
     TabPanel,
     TabPanels,
     Text,
-    Card,
-    CardBody,
-    Box,
 } from '@chakra-ui/react'
 import Categories from '@/components/Restaurant/Categories/Categories';
 import { fetchCategories, fetchItems } from '@/services/resturant.service';
@@ -50,7 +47,7 @@ export async function getServerSideProps(context) {
 }
 
 function restaurant({ user, categories, items }) {
-    
+
     return (
         <div>
             <div>

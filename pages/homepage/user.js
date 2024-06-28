@@ -1,4 +1,4 @@
-import { fetchRestaurants } from '@/services/resturant.service';
+import { fetchAllItems, fetchRestaurantId, fetchRestaurants } from '@/services/resturant.service';
 import React from 'react'
 import {
     Button,
@@ -10,8 +10,14 @@ import {
     Th,
     Td,
     TableContainer,
+    Tab, Tabs,
+    TabList,
+    TabPanel,
+    TabPanels,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router';
+import Orders from '@/components/User/Orders/Orders';
+import { fetchOrders, fetchUser } from '@/services/user.service';
 
 export async function getServerSideProps(context) {
     if (context.req.session.user === undefined) {
@@ -35,13 +41,26 @@ export async function getServerSideProps(context) {
     }
 
     const restaurants = await fetchRestaurants();
+    const orders = await fetchOrders(user.id);
+    const items = await fetchAllItems();
+
+    orders.forEach((order) => {
+        order.orderItems.forEach((item) => {
+            item.item = items.find((i) => i.id === item.itemId);
+        })
+    })
+
+    // adding restaurant name
+    orders.forEach((order) => {
+        order.restaurant = restaurants.find((restaurant) => restaurant.id === order.restaurantId);
+    })
 
     return {
-        props: { user: user, restaurants: JSON.parse(JSON.stringify(restaurants)) },
+        props: { user: user, restaurants: JSON.parse(JSON.stringify(restaurants)) , orders: JSON.parse(JSON.stringify(orders))},
     };
 }
 
-function user({ user, restaurants }) {
+function user({ user, restaurants , orders}) {
     const router = useRouter();
     return (
         <div>
@@ -53,26 +72,40 @@ function user({ user, restaurants }) {
                 </div>
                 <Text fontSize={'2xl'} paddingLeft={"2rem"}>User Homepage</Text>
             </div>
-            <TableContainer padding={"0 2rem 0 2rem"} marginTop={"1rem"}>
-                <Table variant="simple">
-                    <Thead>
-                        <Tr>
-                            <Th>Restaurant Name</Th>
-                            <Th>Actions</Th>
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                        {restaurants.map((restaurant) => (
-                            <Tr key={restaurant.id}>
-                                <Td>{restaurant.username}</Td>
-                                <Td>
-                                    <Button onClick={() => {router.push(`/restaurant/${restaurant.id}`)}}>Browse</Button>
-                                </Td>
-                            </Tr>
-                        ))}
-                    </Tbody>
-                </Table>
-            </TableContainer>
+            <Tabs marginTop={"1rem"} paddingLeft={"2rem"} paddingRight={"2rem"}>
+                <TabList>
+                    <Tab>Restaurants</Tab>
+                    <Tab>Orders</Tab>
+                </TabList>
+                <TabPanels>
+                    <TabPanel>
+                        <TableContainer>
+                            <Table variant="simple">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Restaurant Name</Th>
+                                        <Th>Actions</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {restaurants.map((restaurant) => (
+                                        <Tr key={restaurant.id}>
+                                            <Td>{restaurant.username}</Td>
+                                            <Td>
+                                                <Button onClick={() => { router.push(`/restaurant/${restaurant.id}`) }}>Browse</Button>
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+                    </TabPanel>
+                    <TabPanel>
+                        <Orders orders={orders} />
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
+
         </div>
     )
 }

@@ -67,3 +67,14 @@ export async function createOrderItem(data) {
         data,
     });
 }
+
+export async function fetchOrders(id) {
+    return db.order.findMany({
+        where: {
+            userId: id,
+        },
+        include : {
+            orderItems : true,
+        }
+    });
+}
