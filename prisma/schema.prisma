@@ -5,11 +5,65 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  name     String
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  email     String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model MenuCategory {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  menuItems   MenuItem[]
+}
+
+model MenuItem {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  categoryId  Int
+  category    MenuCategory @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  tableNumber Int
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  completedAt DateTime?
+  orderItems  OrderItem[]
+}
+
+model OrderItem {
+  id       Int      @id @default(autoincrement())
+  orderId  Int
+  order    Order    @relation(fields: [orderId], references: [id])
+  itemId   Int
+  item     MenuItem @relation(fields: [itemId], references: [id])
+  quantity Int
+  price    Float
+}
+
+enum Role {
+  CUSTOMER
+  STAFF
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  DECLINED
 }
