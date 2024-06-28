@@ -3,26 +3,29 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  email     String   @unique
-  role      Role
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id           Int            @id @default(autoincrement())
+  username     String         @unique
+  password     String
+  email        String         @unique
+  role         Role
+  createdAt    DateTime       @default(now())
+  orders       Order[]
+  MenuCategory MenuCategory[]
 }
 
 model MenuCategory {
-  id          Int        @id @default(autoincrement())
-  name        String
-  description String?
-  menuItems   MenuItem[]
+  id           Int        @id @default(autoincrement())
+  name         String
+  description  String?
+  restaurantId Int
+  user         User       @relation(fields: [restaurantId], references: [id])
+  menuItems    MenuItem[]
 }
 
 model MenuItem {
