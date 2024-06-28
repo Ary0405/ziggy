@@ -18,6 +18,7 @@ model User {
   orders       Order[]
   MenuCategory MenuCategory[]
   MenuItem     MenuItem[]
+  Cart         Cart[]
 }
 
 model MenuCategory {
@@ -40,6 +41,7 @@ model MenuItem {
   categoryId   Int
   category     MenuCategory @relation(fields: [categoryId], references: [id])
   orderItems   OrderItem[]
+  Cart         Cart[]
 }
 
 model Order {
@@ -61,6 +63,15 @@ model OrderItem {
   item     MenuItem @relation(fields: [itemId], references: [id])
   quantity Int
   price    Float
+}
+
+model Cart {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id])
+  itemId   Int
+  item     MenuItem @relation(fields: [itemId], references: [id])
+  quantity Int
 }
 
 enum Role {

@@ -19,7 +19,7 @@ export async function getServerSideProps(context) {
         return {
             redirect: {
                 permanent: false,
-                destination: "/signup",
+                destination: "/login",
             },
         };
     }
@@ -50,6 +50,7 @@ export async function getServerSideProps(context) {
 }
 
 function restaurant({ user, categories, items }) {
+    
     return (
         <div>
             <div>

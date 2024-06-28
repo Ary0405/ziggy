@@ -27,3 +27,19 @@ export async function insertItems(data) {
         data
     });
 }
+
+export async function fetchRestaurants() {
+    return (db).user.findMany({
+        where: {
+            role: 'STAFF'
+        }
+    })
+}
+
+export async function fetchRestaurant(id) {
+    return (db).user.findUnique({
+        where: {
+            id
+        }
+    })
+}
