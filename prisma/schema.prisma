@@ -49,9 +49,10 @@ model MenuItem {
 model Order {
   id           Int         @id @default(autoincrement())
   userId       Int
-  user         User        @relation(name: "UserOrder", fields: [userId], references: [id])
+  orderTotal   Float
   tableNumber  Int
   restaurantId Int
+  user         User        @relation(name: "UserOrder", fields: [userId], references: [id])
   restaurant   User        @relation(name: "RestaurantOrder", fields: [restaurantId], references: [id])
   status       OrderStatus @default(PENDING)
   createdAt    DateTime    @default(now())

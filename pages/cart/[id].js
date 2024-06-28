@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'
 import { fetchCartItems } from '@/services/user.service';
 import { fetchAllCategories, fetchAllItems } from '@/services/resturant.service';
-import { deleteCartItem, updateCartItem } from '@/operations/user.fetch';
+import { createOrder, createOrderItem, deleteCartItem, updateCartItem } from '@/operations/user.fetch';
 import { useRouter } from 'next/router';
 
 export async function getServerSideProps(context) {
@@ -74,12 +74,16 @@ export async function getServerSideProps(context) {
 function Cart({ user, cartItems, cartTotal }) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
+    const [tableNumber, setTableNumber] = useState(0);
+
     const [selectedItem, setSelectedItem] = useState({
         item: {},
         quantity: 0,
         price: 0,
     });
     const [quantity, setQuantity] = useState(selectedItem.quantity);
+
     const handleModify = async () => {
         const data = {
             id: selectedItem.id,
@@ -123,8 +127,71 @@ function Cart({ user, cartItems, cartTotal }) {
         }
     }
 
+    const handleCheckout = async () => {
+
+        const restaurantId = cartItems[0].item.restaurantId;
+        const orderData = {
+            userId: user.id,
+            restaurantId: restaurantId,
+            tableNumber: parseInt(tableNumber),
+            orderTotal: cartTotal,
+        }
+
+        try {
+            const orderResponse = await createOrder(orderData);
+            const ord = JSON.parse(orderResponse.message);
+            const orderId = ord.id;
+            cartItems.map(async (item) => {
+                const data = {
+                    orderId: orderId,
+                    itemId: item.item.id,
+                    quantity: item.quantity,
+                    price: item.price,
+                }
+                console.log(data);
+                try {
+                    await createOrderItem(data);
+                } catch (error) {
+                    console.log(error);
+                    return;
+                }
+            })
+            cartItems.map(async (item) => {
+                const data = {
+                    id: item.id,
+                }
+                try {
+                    await deleteCartItem(data);
+                } catch (error) {
+                    console.log(error);
+                    return;
+                }
+            })
+            alert('Order Placed Successfully');
+            setIsCheckOutOpen(false);
+            window.location.reload();
+        } catch (err) {
+            console.log(err.message);
+            return;
+        }
+    }
+
     return (
         <>
+            <Modal isOpen={isCheckOutOpen} onClose={() => setIsCheckOutOpen(false)}>
+                <ModalOverlay />
+                <ModalContent padding={"2rem 2rem 2rem 2rem"}>
+                    <ModalHeader>Are you sure you want to checkout ?</ModalHeader>
+                    <FormControl marginTop={"1rem"}>
+                        <FormLabel>Add Table Number</FormLabel>
+                        <Input onChange={(e) => setTableNumber(e.target.value)} type='number' placeholder='Table Number' />
+                    </FormControl>
+                    <Text margin={"1rem 0 1rem 0"}>
+                        Total: {cartTotal}
+                    </Text>
+                    <Button onClick={() => handleCheckout()}>Checkout</Button>
+                </ModalContent>
+            </Modal>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <ModalOverlay />
                 <ModalContent padding={"2rem 2rem 2rem 2rem"}>
@@ -197,6 +264,9 @@ function Cart({ user, cartItems, cartTotal }) {
                             </Tr>
                         </Tfoot>
                     </Table>
+                    <Button onClick={() => {
+                        setIsCheckOutOpen(true);
+                    }} marginTop={"1rem"}>Proceed to Checkout</Button>
                 </TableContainer>
             </div>
         </>

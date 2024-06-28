@@ -55,3 +55,15 @@ export async function updateCartItem(data) {
         data,
     });
 }
+
+export async function createOrder(data) {
+    return db.order.create({
+        data,
+    });
+}
+
+export async function createOrderItem(data) {
+    return db.orderItem.create({
+        data,
+    });
+}
