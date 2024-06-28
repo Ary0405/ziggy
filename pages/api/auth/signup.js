@@ -11,9 +11,10 @@ async function SignUp(req, res) {
     try {
 
         const response = await createUser({
-            name: body.name,
+            username: body.name,
             email: body.email,
             password: hashSync(body.password, 10),
+            role: body.role
         });
         const user = await fetchUser(body.email);
         req.session.user = user;
