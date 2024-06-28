@@ -48,6 +48,20 @@ export async function getServerSideProps(context) {
 
 function restaurant({ user, categories, items }) {
 
+    const handleLogOut = async () => {
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        });
+
+        if (response.status === 200) {
+            window.location.href = "/login";
+        }
+    }
+
     return (
         <div>
             <div>

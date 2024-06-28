@@ -56,11 +56,25 @@ export async function getServerSideProps(context) {
     })
 
     return {
-        props: { user: user, restaurants: JSON.parse(JSON.stringify(restaurants)) , orders: JSON.parse(JSON.stringify(orders))},
+        props: { user: user, restaurants: JSON.parse(JSON.stringify(restaurants)), orders: JSON.parse(JSON.stringify(orders)) },
     };
 }
 
-function user({ user, restaurants , orders}) {
+function user({ user, restaurants, orders }) {
+    
+    const handleLogOut = async () => {
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        });
+
+        if (response.status === 200) {
+            window.location.href = "/login";
+        }
+    }
     const router = useRouter();
     return (
         <div>
