@@ -81,3 +81,43 @@ export async function updateOrderStatus(data) {
         }
     });
 }
+
+export async function updateCategory(data) {
+    return db.menuCategory.update({
+        where: {
+            id: data.id,
+        },
+        data,
+    });
+}
+
+export async function deleteCategory(data) {
+    return db.menuCategory.update({
+        where: {
+            id: data.id,
+        },
+        data: {
+            status: 'UNAVAILABLE'
+        }
+    });
+}
+
+export async function updateItem(data) {
+    return db.menuItem.update({
+        where: {
+            id: data.id,
+        },
+        data,
+    });
+}
+
+export async function deleteItem(data) {
+    return db.menuItem.update({
+        where: {
+            id: data.id,
+        },
+        data: {
+            status: 'UNAVAILABLE'
+        }
+    });
+}
