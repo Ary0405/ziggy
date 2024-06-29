@@ -29,3 +29,19 @@ export async function createItem(data) {
         console.log(err)
     });
 }
+
+export async function updateStatusOrder(data) {
+    return fetch(
+        "/api/restaurant/orders/updateStatus", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+    }).then((res) => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+    });
+}

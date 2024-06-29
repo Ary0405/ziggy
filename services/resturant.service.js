@@ -59,3 +59,25 @@ export async function fetchRestaurantId(id) {
         }
     });
 }
+
+export async function fetchRestaurantOrders(id) {
+    return (db).order.findMany({
+        where: {
+            restaurantId: id
+        },
+        include: {
+            orderItems: true
+        }
+    });
+}
+
+export async function updateOrderStatus(data) {
+    return db.order.update({
+        where: {
+            id: data.id,
+        },
+        data: {
+            status: data.status
+        }
+    });
+}
