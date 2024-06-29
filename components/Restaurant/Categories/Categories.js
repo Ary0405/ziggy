@@ -22,6 +22,7 @@ function Categories({ categories, user }) {
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const [isDelOpen, setIsDelOpen] = useState(false);
     const [selectedCat, setSelectedCat] = useState(0);
     const [categoryName, setCategoryName] = useState("");
     const [categoryDesc, setCategoryDesc] = useState("");
@@ -73,8 +74,22 @@ function Categories({ categories, user }) {
         }
         return;
     }
+
+    const handleDelete = async () => {
+
+    }
     return (
         <>
+            <Modal isOpen={isDelOpen} onClose={() => setIsDelOpen(false)}>
+                <ModalOverlay />
+                <ModalContent padding={"2rem 2rem 2rem 2rem"}>
+                    <ModalHeader>Delete Category</ModalHeader>
+                    <Text>Are you sure you want to delete this category?</Text>
+                    <Text>This action cannot be undone and all the </Text>
+                    <Button marginTop={"1rem"} onClick={() => handleDelete()}>Delete Category</Button>
+                    <Button marginTop={"1rem"} onClick={() => setIsDelOpen(false)}>Close</Button>
+                </ModalContent>
+            </Modal>
             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
                 <ModalOverlay />
                 <ModalContent padding={"2rem 2rem 2rem 2rem"}>
@@ -139,7 +154,10 @@ function Categories({ categories, user }) {
                                                     setSelectedCat(category);
                                                     setSelectedCatId(category.id);
                                                 }}>Edit</Button>
-                                                <Button>Delete</Button>
+                                                <Button onClick={() => {
+                                                    setIsDelOpen(true);
+                                                    setSelectedCatId(category.id);
+                                                }}>Delete</Button>
                                             </Td>
                                         </Tr>
                                     )
