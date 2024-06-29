@@ -35,7 +35,6 @@ export async function getServerSideProps(context) {
 
     const categories = await fetchCategories(user.id);
 
-    // removing UNAVAILABLE CATEGORIES
     categories.forEach((category) => {
         if (category.status === 'UNAVAILABLE') {
             const index = categories.indexOf(category);

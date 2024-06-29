@@ -109,3 +109,19 @@ export async function removeItems(data) {
         console.log(err)
     });
 }
+
+export async function editItems(data) {
+    return fetch(
+        "/api/restaurant/items/editItem", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+    }).then((res) => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+    });
+}
