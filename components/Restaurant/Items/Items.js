@@ -28,6 +28,7 @@ function Items({ user, categories, items }) {
     const [selectedItem, setSelectedItem] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [delId, setDelId] = useState(0);
+    const [filterCategory, setFilterCategory] = useState("");
 
     const handleClick = async () => {
         if (name === "" || description === "" || categoryId === 0 || price === 0) {
@@ -172,6 +173,16 @@ function Items({ user, categories, items }) {
                 <hr style={{ "marginTop": "1.5rem" }} />
                 <div>
                     <Text fontSize={"2xl"}>Items</Text>
+                    <div style={{ "display": "flex", "alignItems": "center" }}>
+                        <Text marginRight={"1.5rem"}>Select Category</Text>
+                        <select onChange={(e) => setFilterCategory(e.target.value)}>
+                            <option value="">Filter by Category</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.name}>{category.name}</option>
+                            ))}
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
                     <TableContainer>
                         <Table variant="simple">
                             <Thead>
@@ -187,6 +198,11 @@ function Items({ user, categories, items }) {
                                 {items.map((item) => {
                                     if (item.status === 'UNAVAILABLE') {
                                         return;
+                                    }
+                                    if (filterCategory !== "" && filterCategory !== "All Categories") {
+                                        if (item.category_name !== filterCategory) {
+                                            return;
+                                        }
                                     }
                                     return (
                                         <Tr key={item.id}>
