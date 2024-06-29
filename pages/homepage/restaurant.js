@@ -8,8 +8,9 @@ import {
     Text,
 } from '@chakra-ui/react'
 import Categories from '@/components/Restaurant/Categories/Categories';
-import { fetchCategories, fetchItems } from '@/services/resturant.service';
+import { fetchCategories, fetchItems, fetchRestaurantId, fetchRestaurantOrders } from '@/services/resturant.service';
 import Items from '@/components/Restaurant/Items/Items';
+import Orders from '@/components/Restaurant/Orders/Orders';
 
 export async function getServerSideProps(context) {
     if (context.req.session.user === undefined) {
@@ -34,6 +35,13 @@ export async function getServerSideProps(context) {
 
     const categories = await fetchCategories(user.id);
 
+    categories.forEach((category) => {
+        if (category.status === 'UNAVAILABLE') {
+            const index = categories.indexOf(category);
+            categories.splice(index, 1);
+        }
+    })
+
     const items = await fetchItems(user.id);
 
     items.forEach((item) => {
@@ -41,12 +49,20 @@ export async function getServerSideProps(context) {
         item.category_name = category.name;
     });
 
+    const orders = await fetchRestaurantOrders(user.id);
+
+    orders.forEach((order) => {
+        order.orderItems.forEach((item) => {
+            item.item = items.find((i) => i.id === item.itemId);
+        })
+    })
+
     return {
-        props: { user: user, categories: categories, items: items },
+        props: { user: user, categories: categories, items: items, orders: JSON.parse(JSON.stringify(orders)) },
     };
 }
 
-function restaurant({ user, categories, items }) {
+function restaurant({ user, categories, items, orders }) {
 
     const handleLogOut = async () => {
         const response = await fetch('/api/auth/logout', {
@@ -85,7 +101,7 @@ function restaurant({ user, categories, items }) {
                         <Items categories={categories} user={user} items={items} />
                     </TabPanel>
                     <TabPanel>
-                        <p>Orders</p>
+                        <Orders orders={orders} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

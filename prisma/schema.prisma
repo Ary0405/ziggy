@@ -28,6 +28,7 @@ model MenuCategory {
   name         String
   description  String?
   restaurantId Int
+  status       MenuStatus @default(AVAILABLE)
   user         User       @relation(fields: [restaurantId], references: [id])
   menuItems    MenuItem[]
 }
@@ -41,6 +42,7 @@ model MenuItem {
   price        Float
   imageUrl     String?
   categoryId   Int
+  status       MenuStatus   @default(AVAILABLE)
   category     MenuCategory @relation(fields: [categoryId], references: [id])
   orderItems   OrderItem[]
   Cart         Cart[]
@@ -91,4 +93,9 @@ enum OrderStatus {
   PENDING
   COMPLETED
   DECLINED
+}
+
+enum MenuStatus {
+  AVAILABLE
+  UNAVAILABLE
 }
