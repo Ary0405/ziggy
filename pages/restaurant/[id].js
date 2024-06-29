@@ -30,6 +30,13 @@ export async function getServerSideProps(context) {
 
     const categories = await fetchCategories(parseInt(restaurantId));
 
+    categories.forEach((category) => {
+        if (category.status === 'UNAVAILABLE') {
+            const index = categories.indexOf(category);
+            categories.splice(index, 1);
+        }
+    })
+
     const items = await fetchItems(parseInt(restaurantId));
 
     items.forEach((item) => {
@@ -40,16 +47,17 @@ export async function getServerSideProps(context) {
     const restaurant = await fetchRestaurant(parseInt(restaurantId));
 
     return {
-        props: { user: user, items: items, restaurant: JSON.parse(JSON.stringify(restaurant)) },
+        props: { user: user, items: items, restaurant: JSON.parse(JSON.stringify(restaurant)), categories: categories },
     };
 }
 
-function RestaurantBrowse({ user, items, restaurant }) {
+function RestaurantBrowse({ user, items, restaurant, categories }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState({});
     const [quantity, setQuantity] = useState(0);
     const router = useRouter();
+    const [filterCategory, setFilterCategory] = useState("");
 
     const handleAddToCart = async () => {
         if (quantity === 0) {
@@ -104,22 +112,44 @@ function RestaurantBrowse({ user, items, restaurant }) {
                 </div>
                 <div style={{ "margin": "1rem 2rem 0 2rem" }}>
                     <Text fontSize={"2xl"}>Items</Text>
-                    <div style={{ "display": "flex", "flexWrap": "wrap", "justifyContent": "space-between" }}>
-                        {items.map((item) => (
-                            <Card key={item.id} width={"30%"} margin={"1rem 0 1rem 0"}>
-                                <CardHeader>
-                                    <img src={item.imageUrl} width={"100%"} />
-                                </CardHeader>
-                                <CardBody>
-                                    <Text fontSize={"2xl"}>{item.name}</Text>
-                                    <Text>{item.description}</Text>
-                                    <Text>{item.price}</Text>
-                                </CardBody>
-                                <CardFooter>
-                                    <Button onClick={() => { setSelectedItem(item); setIsOpen(true); }}>Add to Cart</Button>
-                                </CardFooter>
-                            </Card>
-                        ))}
+                    <div style={{"display" : "flex", "border" : "1px solid black", "padding" : "0.5rem 0 0.5rem 1rem", "margin" : "1rem 0 1rem 0"}}>
+                        <Text marginRight={"1.5rem"}>Select Category</Text>
+                        <select onChange={(e) => setFilterCategory(e.target.value)}>
+                            <option value="">Filter by Category</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.name}>{category.name}</option>
+                            ))}
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div style={{ "display": "flex", "flexWrap": "wrap", "justifyContent": "space-evenly" }}>
+                        {items.map((item) => {
+                            if(item.status === 'UNAVAILABLE') {
+                                return;
+                            }
+                            if (filterCategory !== "" && filterCategory !== "All Categories") {
+                                if (item.category_name !== filterCategory) {
+                                    return;
+                                }
+                            }
+                            return (
+                                <Card key={item.id} width={"30%"} margin={"1rem 0 1rem 0"}>
+                                    <CardHeader>
+                                        <img src={item.imageUrl} width={"100%"} />
+                                    </CardHeader>
+                                    <CardBody>
+                                        <Text fontSize={"2xl"}>Name - {item.name}</Text>
+                                        <Text>Description - {item.description}</Text>
+                                        <Text>Price - {item.price}</Text>
+                                        <Text>Category - {item.category_name}</Text>
+                                    </CardBody>
+                                    <CardFooter>
+                                        <Button onClick={() => { setSelectedItem(item); setIsOpen(true); }}>Add to Cart</Button>
+                                    </CardFooter>
+                                </Card>
+                            )
+                        }
+                        )}
                     </div>
                 </div>
             </div>

@@ -27,7 +27,6 @@ function Items({ user, categories, items }) {
     const [price, setPrice] = useState(0);
     const [selectedItem, setSelectedItem] = useState({});
     const [isOpen, setIsOpen] = useState(false);
-    const [delId, setDelId] = useState(0);
     const [filterCategory, setFilterCategory] = useState("");
 
     const handleClick = async () => {
@@ -173,7 +172,7 @@ function Items({ user, categories, items }) {
                 <hr style={{ "marginTop": "1.5rem" }} />
                 <div>
                     <Text fontSize={"2xl"}>Items</Text>
-                    <div style={{ "display": "flex", "alignItems": "center" }}>
+                    <div style={{"display" : "flex", "border" : "1px solid black", "padding" : "0.5rem 0 0.5rem 1rem", "margin" : "1rem 0 1rem 0"}}>
                         <Text marginRight={"1.5rem"}>Select Category</Text>
                         <select onChange={(e) => setFilterCategory(e.target.value)}>
                             <option value="">Filter by Category</option>
