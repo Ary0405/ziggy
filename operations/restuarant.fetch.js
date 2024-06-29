@@ -61,3 +61,51 @@ export async function editCategories(data) {
         console.log(err)
     });
 }
+
+export async function removeCategory(data) {
+    return fetch(
+        "/api/restaurant/categories/removeCategory", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+    }).then((res) => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+    });
+}
+
+export async function fetchMenuItems(data) {
+    return fetch(
+        "/api/restaurant/categories/fetchMenuItems", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+    }).then((res) => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+    });
+}
+
+export async function removeItems(data) {
+    return fetch(
+        "/api/restaurant/items/removeItems", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+        credentials: "include"
+    }).then((res) => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+    });
+}

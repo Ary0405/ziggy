@@ -16,7 +16,7 @@ import {
     ModalContent,
     ModalHeader,
 } from '@chakra-ui/react'
-import { createCategory, editCategories } from '@/operations/restuarant.fetch';
+import { createCategory, editCategories, fetchMenuItems, removeCategory } from '@/operations/restuarant.fetch';
 
 function Categories({ categories, user }) {
     const [category, setCategory] = useState("");
@@ -76,7 +76,37 @@ function Categories({ categories, user }) {
     }
 
     const handleDelete = async () => {
+        try {
+            const data = {
+                id: selectedCatId
+            }
+            const response = await fetchMenuItems(data);
+            const menuItems = JSON.parse(response.message);
+            let availableMenuItems = [];// Helps to understand what type it is if not an array
+            menuItems.map((item) => {
+                if (item.status === "AVAILABLE") {
+                    availableMenuItems.push(item);
+                }
+            });
 
+            if (availableMenuItems.length > 0) {
+                alert('Category has items associated with it. Please remove them first');
+                setIsDelOpen(false);
+                return;
+            }
+
+            const response2 = await removeCategory(data);
+            if (response2.status === 200) {
+                alert('Category Deleted Successfully');
+                setIsDelOpen(false);
+                window.location.reload();
+            } else {
+                alert('Error Deleting Category');
+            }
+
+        } catch (err) {
+            console.log(err.message);
+        }
     }
     return (
         <>
@@ -85,7 +115,7 @@ function Categories({ categories, user }) {
                 <ModalContent padding={"2rem 2rem 2rem 2rem"}>
                     <ModalHeader>Delete Category</ModalHeader>
                     <Text>Are you sure you want to delete this category?</Text>
-                    <Text>This action cannot be undone and all the </Text>
+                    <Text>This action cannot be undone</Text>
                     <Button marginTop={"1rem"} onClick={() => handleDelete()}>Delete Category</Button>
                     <Button marginTop={"1rem"} onClick={() => setIsDelOpen(false)}>Close</Button>
                 </ModalContent>

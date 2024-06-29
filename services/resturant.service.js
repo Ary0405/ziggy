@@ -121,3 +121,11 @@ export async function deleteItem(data) {
         }
     });
 }
+
+export async function fetchCategoryItem(data) {
+    return db.menuItem.findMany({
+        where: {
+            categoryId: data.id
+        }
+    });
+}
