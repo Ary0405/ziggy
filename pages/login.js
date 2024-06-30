@@ -30,9 +30,9 @@ function login() {
             const response = await loginUser(data);
             if (response.status === 200) {
                 alert('Logged in successfully');
-
                 // pushing it to user cause it would redirect even if it is restaurant
                 router.push('/homepage/user')
+
             } else {
                 console.log(response);
                 alert('Error logging in, Make sure you are connected to the internet or the credentials are wrong');
@@ -57,7 +57,7 @@ function login() {
             <Button onClick={() => handleLogin()}>
                 Login
             </Button>
-            <Text marginTop={"1rem"}>Dont have an account? <a style={{"cursor" : "pointer"}} href='/signup'> Signup </a></Text>
+            <Text marginTop={"1rem"}>Dont have an account? <a style={{ "cursor": "pointer" }} href='/signup'> Signup </a></Text>
         </div>
     )
 }

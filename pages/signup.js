@@ -5,6 +5,7 @@ import {
     FormLabel,
     Input,
     FormHelperText,
+    Text,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { signupUser } from '@/operations/user.fetch';
@@ -66,6 +67,7 @@ function signup() {
             <Button onClick={() => handleSignUp()}>
                 Signup
             </Button>
+            <Text marginTop={"1rem"}>Have an account? <a style={{ "cursor": "pointer" }} href='/login'> Login </a></Text>
         </div>
     )
 }
