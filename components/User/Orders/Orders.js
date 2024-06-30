@@ -125,7 +125,7 @@ function Orders({ orders }) {
                     <TabPanel>
                     {
                             orders.map((order) => {
-                                if(order.status === "COMPLETED" || order.status === "DECLINED") {
+                                if(order.status === "COMPLETED" || order.status === "PENDING") {
                                     return null;
                                 }
                                 return (

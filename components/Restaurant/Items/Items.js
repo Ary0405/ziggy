@@ -17,6 +17,10 @@ import {
     FormLabel,
 } from '@chakra-ui/react'
 import { createItem, editItems, removeItems } from '@/operations/restuarant.fetch';
+import { createClient } from '@supabase/supabase-js';
+import { generate } from 'random-words';
+
+export const supabase = createClient(process.env.NEXT_PUBLIC_PROJECT_URL, process.env.NEXT_PUBLIC_SUPABASE_KEY)
 
 function Items({ user, categories, items }) {
 
@@ -28,9 +32,27 @@ function Items({ user, categories, items }) {
     const [selectedItem, setSelectedItem] = useState({});
     const [isOpen, setIsOpen] = useState(false);
     const [filterCategory, setFilterCategory] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+
+    async function uploadFile(file, file_path) {
+        const { data, error } = await supabase.storage.from('ziggy-images').upload(file_path, file)
+        const res = supabase.storage.from('ziggy-images').getPublicUrl(file_path);
+        if (error) {
+            console.log(error)
+        } else {
+            console.log(res['data'].publicUrl)
+            setImageUrl(res['data'].publicUrl)
+        }
+    }
+
+
+    const uploadImage = async (file) => {
+        const fp = generate();
+        await uploadFile(file, fp);
+    }
 
     const handleClick = async () => {
-        if (name === "" || description === "" || categoryId === 0 || price === 0) {
+        if (name === "" || description === "" || categoryId === 0 || price === 0 || imageUrl === "") {
             alert("Please fill in all the fields");
             return;
         }
@@ -41,13 +63,14 @@ function Items({ user, categories, items }) {
             price: parseFloat(price),
             categoryId: parseInt(categoryId),
             restaurantId: user.id,
-            imageUrl: "https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
+            imageUrl: imageUrl,
         }
 
         try {
             const res = await createItem(data);
             if (res.status === 200) {
                 alert('Item Added Successfully');
+                setImageUrl("");
                 window.location.reload();
             } else {
                 alert('Error Adding Item');
@@ -66,7 +89,7 @@ function Items({ user, categories, items }) {
             price: parseFloat(price) === 0 ? selectedItem.price : parseFloat(price),
             categoryId: parseInt(categoryId) === 0 ? selectedItem.categoryId : parseInt(categoryId),
             restaurantId: user.id,
-            imageUrl: "https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
+            imageUrl: imageUrl === "" ? selectedItem.imageUrl : imageUrl,
         }
 
         try {
@@ -120,6 +143,11 @@ function Items({ user, categories, items }) {
                         <FormLabel>Price</FormLabel>
                         <Input defaultValue={selectedItem.price} onChange={(e) => setPrice(e.target.value)} type='text' />
                     </FormControl>
+                    <FormControl className='Signup__form'>
+                        <Input onChange={(e) => {
+                            uploadImage(e.target.files[0]);
+                        }} type='file' accept='image/png, image/jpeg' placeholder='Upload Image' />
+                    </FormControl>
                     <select onChange={(e) => setUpdatedCategoryId(e.target.value)}>
                         <option value="">Select Category</option>
                         {categories.map((category) => (
@@ -128,19 +156,19 @@ function Items({ user, categories, items }) {
                     </select>
                     <Button marginTop={"1rem"} onClick={() => {
                         if (
-                            (name === '' && description === '' && price === 0 && updatedCategoryId === 0) ||
-                            (name === selectedItem.name && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === selectedItem.name && description === '' && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === '' && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === selectedItem.name && description === selectedItem.description && price === 0 && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === selectedItem.name && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === 0) ||
-                            (name === '' && description === '' && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === '' && description === '' && price === 0 && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === '' && description === '' && price === selectedItem.price && updatedCategoryId === 0) ||
-                            (name === selectedItem.name && description === '' && price === 0 && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === selectedItem.name && description === '' && price === selectedItem.price && updatedCategoryId === 0) ||
-                            (name === '' && description === selectedItem.description && price === 0 && updatedCategoryId === selectedItem.categoryId) ||
-                            (name === '' && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === 0)
+                            (name === '' && description === '' && price === 0 && updatedCategoryId === 0 && imageUrl === "") ||
+                            (name === selectedItem.name && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === selectedItem.name && description === '' && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === '' && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === selectedItem.name && description === selectedItem.description && price === 0 && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === selectedItem.name && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === 0 && imageUrl === "") ||
+                            (name === '' && description === '' && price === selectedItem.price && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === '' && description === '' && price === 0 && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === '' && description === '' && price === selectedItem.price && updatedCategoryId === 0 && imageUrl === "") ||
+                            (name === selectedItem.name && description === '' && price === 0 && updatedCategoryId === selectedItem.categoryId && imageUrl === "" ) ||
+                            (name === selectedItem.name && description === '' && price === selectedItem.price && updatedCategoryId === 0 && imageUrl === "") ||
+                            (name === '' && description === selectedItem.description && price === 0 && updatedCategoryId === selectedItem.categoryId && imageUrl === "") ||
+                            (name === '' && description === selectedItem.description && price === selectedItem.price && updatedCategoryId === 0 && imageUrl === "")
                         ) {
                             alert("Please Modify Something");
                             return;
@@ -161,6 +189,12 @@ function Items({ user, categories, items }) {
                     <FormControl className='Signup__form'>
                         <Input marginTop={"0.4rem"} placeholder='Enter Price' onChange={(e) => { setPrice(e.target.value) }} type='text' />
                     </FormControl>
+                    {/* upload image */}
+                    <FormControl className='Signup__form'>
+                        <Input onChange={(e) => {
+                            uploadImage(e.target.files[0]);
+                        }} type='file' accept='image/png, image/jpeg' placeholder='Upload Image' />
+                    </FormControl>
                     <select onChange={(e) => { setCategoryId(e.target.value) }}>
                         <option value="">Select Category</option>
                         {categories.map((category) => (
@@ -172,7 +206,7 @@ function Items({ user, categories, items }) {
                 <hr style={{ "marginTop": "1.5rem" }} />
                 <div>
                     <Text fontSize={"2xl"}>Items</Text>
-                    <div style={{"display" : "flex", "border" : "1px solid black", "padding" : "0.5rem 0 0.5rem 1rem", "margin" : "1rem 0 1rem 0"}}>
+                    <div style={{ "display": "flex", "border": "1px solid black", "padding": "0.5rem 0 0.5rem 1rem", "margin": "1rem 0 1rem 0" }}>
                         <Text marginRight={"1.5rem"}>Select Category</Text>
                         <select onChange={(e) => setFilterCategory(e.target.value)}>
                             <option value="">Filter by Category</option>
@@ -189,6 +223,7 @@ function Items({ user, categories, items }) {
                                     <Th>Item Name</Th>
                                     <Th>Description</Th>
                                     <Th>Price</Th>
+                                    <Th>Image</Th>
                                     <Th>Category</Th>
                                     <Th>Actions</Th>
                                 </Tr>
@@ -208,6 +243,9 @@ function Items({ user, categories, items }) {
                                             <Td>{item.name}</Td>
                                             <Td>{item.description}</Td>
                                             <Td>{item.price}</Td>
+                                            <Td>
+                                                <img src={item.imageUrl} height={"70px"} width={"70px"} />
+                                            </Td>
                                             <Td>{item.category_name}</Td>
                                             <Td>
                                                 <Button marginRight={"1rem"} onClick={() => {

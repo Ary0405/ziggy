@@ -2,8 +2,10 @@ import './HeroComponent.scss'
 import React from 'react'
 import Link from 'next/link';
 import { Button, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 
 function HeroComponent() {
+    const router = useRouter();
     return (
         <div className='HeroComponent' >
             <h1 className='HeroComponent__title'>
@@ -13,10 +15,10 @@ function HeroComponent() {
                 Restaurant Booking Made Simple
             </p>
             <div className='HeroComponent__auth'>
-                <Button className='HeroComponent__auth--login'>
+                <Button onClick={() => router.push('/login')} className='HeroComponent__auth--login'>
                     Login
                 </Button>
-                <Button className='HeroComponent__auth--signup'>
+                <Button onClick={() => router.push('/signup')} className='HeroComponent__auth--signup'>
                     Register
                 </Button>
             </div>
