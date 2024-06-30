@@ -108,11 +108,12 @@ function RestaurantBrowse({ user, items, restaurant, categories }) {
                     <div style={{ "paddingTop": "1rem", "display": "flex", "justifyContent": "space-between", "paddingBottom": "0rem", "paddingLeft": "2rem", "paddingRight": "2rem" }} className="flex flex-col items-center justify-center">
                         <Text fontWeight={"500"} fontSize='4xl'>Welcome to {restaurant.username}</Text>
                         <Button onClick={() => router.push(`/cart/${user.id}`)}>View Cart</Button>
+                        <Button onClick={() => router.push('/homepage/user/')}>HomePage</Button>
                     </div>
                 </div>
                 <div style={{ "margin": "1rem 2rem 0 2rem" }}>
                     <Text fontSize={"2xl"}>Items</Text>
-                    <div style={{"display" : "flex", "border" : "1px solid black", "padding" : "0.5rem 0 0.5rem 1rem", "margin" : "1rem 0 1rem 0"}}>
+                    <div style={{ "display": "flex", "border": "1px solid black", "padding": "0.5rem 0 0.5rem 1rem", "margin": "1rem 0 1rem 0" }}>
                         <Text marginRight={"1.5rem"}>Select Category</Text>
                         <select onChange={(e) => setFilterCategory(e.target.value)}>
                             <option value="">Filter by Category</option>
@@ -124,7 +125,7 @@ function RestaurantBrowse({ user, items, restaurant, categories }) {
                     </div>
                     <div style={{ "display": "flex", "flexWrap": "wrap", "justifyContent": "space-evenly" }}>
                         {items.map((item) => {
-                            if(item.status === 'UNAVAILABLE') {
+                            if (item.status === 'UNAVAILABLE') {
                                 return;
                             }
                             if (filterCategory !== "" && filterCategory !== "All Categories") {
